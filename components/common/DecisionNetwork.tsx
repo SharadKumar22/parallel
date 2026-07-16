@@ -3,7 +3,9 @@ import {
   createNodes,
   updateNodes,
   drawNodes,
+  drawConnections,
 } from "@/lib/decision-network";
+
 
 import { useEffect, useRef } from "react";
 
@@ -35,15 +37,18 @@ window.addEventListener("resize", resizeCanvas);
   function animate() {
     ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-    ctx.fillStyle = "#60A5FA";
+updateNodes(
+  nodes,
+  canvasElement.width,
+  canvasElement.height
+);
+const time = performance.now() * 0.001;
 
-    updateNodes(
-      nodes,
-      canvasElement.width,
-      canvasElement.height
-    );
+drawConnections(ctx, nodes, time);
 
-    drawNodes(ctx, nodes);
+ctx.fillStyle = "#60A5FA";
+
+drawNodes(ctx, nodes, time);
 
     animationId = requestAnimationFrame(animate);
   }
