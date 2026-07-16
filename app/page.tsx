@@ -1,11 +1,15 @@
+"use client";
+
 import DecisionNetwork from "@/components/common/DecisionNetwork";
-import IntroSequence from "@/components/landing/IntroSequence";
+import LandingScene from "@/components/landing/LandingScene";
+import Navbar from "@/components/landing/Navbar";
 
 export default function Home() {
   return (
     <>
-      <DecisionNetwork />
-      <IntroSequence />
-    </>
+  <DecisionNetwork />
+
+  <LandingScene />
+</>
   );
 }

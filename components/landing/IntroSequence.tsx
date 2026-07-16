@@ -1,5 +1,6 @@
-"use client";
 
+"use client";
+import { SCENES, type Scene } from "@/constants/scene";
 import { useEffect, useState } from "react";
 const QUESTIONS = [
   "...you chose differently?",
@@ -10,11 +11,20 @@ const QUESTIONS = [
 
 
 
-export default function IntroSequence() {
+interface IntroSequenceProps {
+  scene: Scene;
+  onComplete: () => void;
+}
+
+export default function IntroSequence({
+  scene,
+  onComplete,
+}: IntroSequenceProps) {
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [showTitle, setShowTitle] = useState(false);
     const [showQuestion, setShowQuestion] = useState(false);
     const [isTransitioning, setIsTransitioning] = useState(false);
+    const [isLeaving, setIsLeaving] = useState(false);
     
         useEffect(() => {
             
@@ -46,10 +56,19 @@ export default function IntroSequence() {
 
             }, 1400);
 
+            const finishTimer = setTimeout(() => {
+  setIsLeaving(true);
+
+setTimeout(() => {
+  onComplete();
+}, 700);
+}, 9500);
+
         return () => {
             clearTimeout(titleTimer);
             clearTimeout(questionTimer);
             clearTimeout(rotationStartTimer);
+            clearTimeout(finishTimer);
 
             if (rotationInterval) {
                 clearInterval(rotationInterval);
@@ -57,7 +76,22 @@ export default function IntroSequence() {
         };
     }, []);
     return (
-        <section className="flex min-h-screen items-center justify-center pb-24">
+        <section
+  className={`
+    fixed inset-0 z-10
+    flex items-center justify-center pb-24
+    transition-all
+    duration-700
+    ease-out
+    ${
+  scene === SCENES.INTRO
+    ? "opacity-100 scale-100"
+    : scene === SCENES.TRANSITION
+      ? "opacity-0 scale-[0.98] pointer-events-none"
+      : "hidden"
+}
+  `}
+>
         <div className="text-center">
         <h1
             className={`
@@ -78,9 +112,8 @@ export default function IntroSequence() {
 >
   What if...
 </h1>
-        <p
+    <div className="mt-6 h-10 flex items-center justify-center">    <p
   className={`
-    mt-6
     text-xl
     md:text-2xl
     font-normal
@@ -98,7 +131,7 @@ export default function IntroSequence() {
   `}
 >
   {QUESTIONS[currentQuestion]}
-</p>
+</p></div>
       </div>
     </section>
   );
