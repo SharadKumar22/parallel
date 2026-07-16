@@ -28,7 +28,12 @@ useEffect(() => {
   return () => timers.forEach(clearTimeout);
 }, [animate]);
   return (
-  <section className="flex min-h-screen items-center justify-center px-6 pb-24">
+ <section
+  className="
+    flex min-h-screen items-center justify-center px-6 pb-24
+    transition-colors duration-500 ease-in-out
+  "
+>
       <div className="max-w-3xl text-center">
 
         <p

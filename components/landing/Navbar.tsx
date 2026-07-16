@@ -17,6 +17,9 @@ export default function Navbar({
     transition-all
     duration-700
     ease-out
+    transition-colors
+    duration-500
+    ease-in-out
 
     ${
       visible

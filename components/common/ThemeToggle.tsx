@@ -4,17 +4,34 @@ import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+useEffect(() => {
+  setMounted(true);
+}, []);
 
   const isDark = theme === "dark";
 
+  if (!mounted) {
   return (
     <Button
       variant="ghost"
       size="icon"
       className="relative"
+      disabled
+    />
+  );
+}
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      className="relative transition-colors duration-500 ease-in-out"
       onClick={() =>
         setTheme(isDark ? "light" : "dark")
       }
