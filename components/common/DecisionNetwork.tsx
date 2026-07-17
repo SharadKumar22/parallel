@@ -6,11 +6,24 @@ import {
   drawConnections,
 } from "@/lib/decision-network";
 
+import { NETWORK_VARIANTS } from "@/constants/network-variants";
 
 import { useEffect, useRef } from "react";
 
-export default function DecisionNetwork() {
+type DecisionNetworkVariant =
+  | "landing"
+  | "questionnaire"
+  | "simulation";
+
+interface DecisionNetworkProps {
+  variant?: DecisionNetworkVariant;
+}
+
+export default function DecisionNetwork({
+  variant = "landing",
+}: DecisionNetworkProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const config = NETWORK_VARIANTS[variant];
 
   useEffect(() => {
 const canvasElement = canvasRef.current!;
@@ -27,10 +40,10 @@ resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
   const nodes = createNodes(
-    70,
-    canvasElement.width,
-    canvasElement.height
-  );
+  config.density,
+  canvasElement.width,
+  canvasElement.height
+);
 
   let animationId: number;
 
