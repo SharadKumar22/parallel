@@ -1,60 +1,23 @@
-# Parallel Vision
+# Parallel Architecture
 
-## Why Parallel Exists
+## System Overview
 
-People make life-changing decisions with incomplete information.
+Parallel is a modern full-stack web application built using a component-driven architecture.
 
-Parallel exists to help users explore realistic possibilities before making those decisions.
+The application is divided into independent layers, each with a clearly defined responsibility. The frontend manages user interaction and presentation, the backend orchestrates business logic and persistence, and AI services generate simulation outcomes.
 
-It is not a fortune teller.
+```
+                User
+                  │
+                  ▼
+        Next.js Frontend (UI)
+                  │
+                  ▼
+        Application Logic
+                  │
+         ┌────────┴────────┐
+         ▼                 ▼
+   AI Simulation      Database
+```
 
-It is a thinking partner.
-
----
-
-## Product Values
-
-Parallel should feel:
-
-- Calm
-- Intelligent
-- Trustworthy
-- Premium
-- Thoughtful
-
-Never:
-
-- Loud
-- Over-animated
-- Gamified
-- Sensational
-
----
-
-## Design Philosophy
-
-Dark Theme
-
-Represents exploration and uncertainty.
-
-Light Theme
-
-Represents clarity and understanding.
-
-Both themes should feel like the same product with different moods.
-
----
-
-## User Experience Principles
-
-Every animation should have a purpose.
-
-Every interaction should reduce friction.
-
-Every screen should help the user think more clearly.
-
----
-
-## Long-Term Goal
-
-Become the most intuitive platform for exploring decisions through AI-powered simulation.
+This separation allows each layer to evolve independently while maintaining a predictable flow of data throughout the application.

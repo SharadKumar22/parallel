@@ -1,18 +1,8 @@
 # Parallel Architecture
 
-## Vision
+## Technology Stack
 
-Parallel is an AI-powered possibility simulator that helps users explore multiple realistic outcomes before making important decisions.
-
-Parallel does **not** predict the future.
-
-Instead, it combines structured reasoning, simulation, and AI to present plausible possibilities.
-
----
-
-# Technology Stack
-
-## Frontend
+### Frontend
 
 - Next.js 16 (App Router)
 - TypeScript
@@ -21,70 +11,73 @@ Instead, it combines structured reasoning, simulation, and AI to present plausib
 - Motion
 - Lucide Icons
 
-## Backend (Planned)
+### Backend (Planned)
 
 - Next.js Route Handlers
 - Prisma ORM
 - PostgreSQL
 
-## AI (Planned)
+### AI (Planned)
 
 - OpenAI
 - Gemini (when beneficial)
 
-## Deployment
+### Deployment
 
 - Vercel
 
 ---
 
-# Project Structure
+## Project Structure
 
 app/
-- Routing
-- Layouts
-- Pages
+├── Routing
+├── Layouts
+└── Pages
 
 components/
-- Shared UI
-- Landing
-- Dashboard
-- Simulation
+├── Shared UI
+├── Landing
+├── Questionnaire
+├── Dashboard
+└── Simulation
 
 constants/
-- Routes
-- Animation timings
-- Theme constants
-- Scene definitions
+├── Routes
+├── Animation Timings
+├── Theme Constants
+└── Scene Definitions
 
 hooks/
-- Reusable React hooks
+├── Reusable React Hooks
 
 lib/
-- Utilities
-- Shared helpers
+├── Utilities
+└── Shared Helpers
 
 services/
-- AI
-- Database
-- Authentication
+├── AI
+├── Database
+└── Authentication
 
 styles/
-- Global styling
+└── Global Styling
 
 types/
-- Shared TypeScript types
+└── Shared TypeScript Types
 
 docs/
-- Architecture
-- Roadmap
-- Vision
+├── Architecture
+├── Decisions
+├── Roadmap
+├── Backlog
+└── Vision
 
 ---
 
-# Engineering Principles
+## Engineering Principles
 
-## Single Responsibility
+### Single Responsibility
 
 Every component owns one responsibility.
 
@@ -104,7 +97,7 @@ DecisionNetwork
 
 ---
 
-## Local State First
+### Local State First
 
 Prefer local state.
 
@@ -112,7 +105,7 @@ Introduce global state only when multiple independent components require it.
 
 ---
 
-## Reusability
+### Reusability
 
 Avoid duplicate UI.
 
@@ -122,7 +115,7 @@ components/
 
 ---
 
-## Configuration
+### Configuration
 
 Avoid magic numbers.
 
@@ -132,7 +125,7 @@ constants/
 
 ---
 
-## Motion Philosophy
+### Motion Philosophy
 
 Animations should:
 
@@ -144,16 +137,38 @@ Animations should never exist purely for decoration.
 
 ---
 
-# Current Milestone
+## Application Architecture
 
-Landing Experience v1.1
+### Landing
 
-Completed
+Landing
+├── Navbar
+├── Hero
+├── DecisionNetwork
+├── ThemeProvider
+└── Loader
 
-- Decision Network
-- Intro Sequence
-- Hero
-- Navbar
-- Theme Toggle
-- Motion Integration
-- Light & Dark Theme
+### Questionnaire
+
+Questionnaire
+        │
+        ▼
+Questionnaire.tsx
+        │
+        ▼
+QuestionRenderer.tsx
+        │
+   ┌────┴────┐
+   ▼         ▼
+Textarea   MultiSelect
+
+## Future Architecture
+
+The following modules are planned and will be documented as they are implemented.
+
+- Simulation Engine
+- AI Integration
+- Timeline Visualization
+- User History
+- Authentication
+- Analytics
