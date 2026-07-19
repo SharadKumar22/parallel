@@ -26,53 +26,53 @@ export default function DecisionNetwork({
   const config = NETWORK_VARIANTS[variant];
 
   useEffect(() => {
-const canvasElement = canvasRef.current!;
+    const canvasElement = canvasRef.current!;
 
-const ctx = canvasElement.getContext("2d")!;
+    const ctx = canvasElement.getContext("2d")!;
 
-  function resizeCanvas() {
-  canvasElement.width = window.innerWidth;
-  canvasElement.height = window.innerHeight;
-}
+    function resizeCanvas() {
+      canvasElement.width = window.innerWidth;
+      canvasElement.height = window.innerHeight;
+    }
 
-resizeCanvas();
+    resizeCanvas();
 
-window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("resize", resizeCanvas);
 
-  const nodes = createNodes(
-  config.density,
-  canvasElement.width,
-  canvasElement.height
-);
+    const nodes = createNodes(
+      config.density,
+      canvasElement.width,
+      canvasElement.height
+    );
 
-  let animationId: number;
+    let animationId: number;
 
-  function animate() {
-    ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    function animate() {
+      ctx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-updateNodes(
-  nodes,
-  canvasElement.width,
-  canvasElement.height
-);
-const time = performance.now() * 0.001;
+      updateNodes(
+        nodes,
+        canvasElement.width,
+        canvasElement.height
+      );
+      const time = performance.now() * 0.001;
 
-drawConnections(ctx, nodes, time);
+      drawConnections(ctx, nodes, time);
 
-ctx.fillStyle = "#60A5FA";
+      ctx.fillStyle = "#60A5FA";
 
-drawNodes(ctx, nodes, time);
+      drawNodes(ctx, nodes, time);
 
-    animationId = requestAnimationFrame(animate);
-  }
+      animationId = requestAnimationFrame(animate);
+    }
 
-  animate();
+    animate();
 
-  return () => {
-  window.removeEventListener("resize", resizeCanvas);
-  cancelAnimationFrame(animationId);
-};
-}, []);
+    return () => {
+      window.removeEventListener("resize", resizeCanvas);
+      cancelAnimationFrame(animationId);
+    };
+  }, []);
 
   return (
     <canvas

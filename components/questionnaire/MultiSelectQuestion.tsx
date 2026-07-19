@@ -6,26 +6,26 @@ import { AnswerValue, Question } from "@/types/questionnaire";
 
 
 interface MultiSelectQuestionProps {
-  question: Question;
-  value: string[];
-  onChange: (value: string[]) => void;
-  otherValue: string;
-  onOtherChange: (value: string) => void;
+    question: Question;
+    value: string[];
+    onChange: (value: string[]) => void;
+    otherValue: string;
+    onOtherChange: (value: string) => void;
 }
 
 export default function MultiSelectQuestion({
-  question,
-  value,
-  onChange,
-  otherValue,
-  onOtherChange,
+    question,
+    value,
+    onChange,
+    otherValue,
+    onOtherChange,
 }: MultiSelectQuestionProps) {
 
     function toggleOption(optionId: string) {
         if (value.includes(optionId)) {
             if (optionId === "other") {
-    onOtherChange("");
-}
+                onOtherChange("");
+            }
 
             onChange(value.filter((id) => id !== optionId));
         } else {

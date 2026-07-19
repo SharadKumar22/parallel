@@ -29,19 +29,19 @@ export default function QuestionRenderer({
       );
 
     case "multi-select":
-  return (
-    <MultiSelectQuestion
-      question={question}
-      value={Array.isArray(value) ? value : []}
-      onChange={(newValue) => onChange(newValue)}
-      otherValue={otherValue}
-      onOtherChange={onOtherChange}
-    />
-  );
+      return (
+        <MultiSelectQuestion
+          question={question}
+          value={Array.isArray(value) ? value : []}
+          onChange={(newValue) => onChange(newValue)}
+          otherValue={otherValue}
+          onOtherChange={onOtherChange}
+        />
+      );
 
     default:
-  throw new Error(
-    `Unsupported question type: ${question.type}`
-  );
+      throw new Error(
+        `Unsupported question type: ${question.type}`
+      );
   }
 }

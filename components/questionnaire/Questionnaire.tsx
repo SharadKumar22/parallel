@@ -8,8 +8,14 @@ import QuestionRenderer from "./QuestionRenderer";
 
 import { QUESTIONS } from "@/constants/questionnaire";
 import { AnswerValue, Answers } from "@/types/questionnaire";
+
+import { saveSession } from "@/store/session";
+import { useRouter } from "next/navigation";
+
 export default function Questionnaire() {
   const [currentStep, setCurrentStep] = useState(0);
+
+  const router = useRouter();
 
   const [answers, setAnswers] = useState<Answers>({
     decision: "",
@@ -24,7 +30,12 @@ export default function Questionnaire() {
   function goNext() {
     if (currentStep < QUESTIONS.length - 1) {
       setCurrentStep((step) => step + 1);
+      return;
     }
+
+    saveSession(answers);
+
+    router.push("/simulation");
   }
 
   function goBack() {
@@ -87,11 +98,13 @@ export default function Questionnaire() {
   const progress = ((currentStep + 1) / QUESTIONS.length) * 100;
 
   return (
+
     <QuestionnaireLayout>
+
       <section className="w-full max-w-3xl rounded-3xl border p-8">
         <div className="mb-8">
-  <Progress value={progress} />
-</div>
+          <Progress value={progress} />
+        </div>
         <h1 className="text-3xl font-bold">
           {currentQuestion.title}
         </h1>
@@ -139,5 +152,6 @@ export default function Questionnaire() {
         </div>
       </section>
     </QuestionnaireLayout>
+
   );
 }
