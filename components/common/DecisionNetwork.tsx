@@ -15,12 +15,16 @@ type DecisionNetworkVariant =
   | "questionnaire"
   | "simulation";
 
+import type { RenderZone } from "@/lib/render-zones";
+
 interface DecisionNetworkProps {
   variant?: DecisionNetworkVariant;
+  zones?: RenderZone[];
 }
 
 export default function DecisionNetwork({
   variant = "landing",
+  zones = [],
 }: DecisionNetworkProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const config = NETWORK_VARIANTS[variant];
@@ -53,15 +57,15 @@ export default function DecisionNetwork({
       updateNodes(
         nodes,
         canvasElement.width,
-        canvasElement.height
+        canvasElement.height,
       );
       const time = performance.now() * 0.001;
 
-      drawConnections(ctx, nodes, time);
+      drawConnections(ctx, nodes, time, zones);
 
       ctx.fillStyle = "#60A5FA";
 
-      drawNodes(ctx, nodes, time);
+      drawNodes(ctx, nodes, time, zones);
 
       animationId = requestAnimationFrame(animate);
     }
@@ -72,7 +76,7 @@ export default function DecisionNetwork({
       window.removeEventListener("resize", resizeCanvas);
       cancelAnimationFrame(animationId);
     };
-  }, []);
+  }, [config,zones]);
 
   return (
     <canvas

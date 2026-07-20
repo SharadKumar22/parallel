@@ -3,6 +3,11 @@ import {
   MIN_NODE_RADIUS,
   MAX_NODE_RADIUS,
 } from "@/constants/decision-network";
+import type { RenderZone } from "@/lib/render-zones";
+import { isNodeInsideAnyZone } from "@/lib/render-zones";
+
+const EDGE_CONNECTION_ALPHA = 0.25;
+
 export interface Node {
   x: number;
   y: number;
@@ -17,6 +22,7 @@ export interface Node {
 
   layer: 1 | 2 | 3;
 }
+
 export function createNodes(
   count: number,
   width: number,
@@ -72,11 +78,12 @@ export function createNodes(
 export function updateNodes(
   nodes: Node[],
   width: number,
-  height: number
+  height: number,
 ) {
   for (const node of nodes) {
-    node.x += node.vx;
-    node.y += node.vy;
+    
+node.x += node.vx;
+node.y += node.vy;
 
     if (node.x <= 0 || node.x >= width) {
       node.vx *= -1;
@@ -87,12 +94,20 @@ export function updateNodes(
     }
   }
 }
+
 export function drawNodes(
   ctx: CanvasRenderingContext2D,
   nodes: Node[],
-  time: number
+  time: number,
+  zones: RenderZone[]
 ) {
   for (const node of nodes) {
+    const insideZone = isNodeInsideAnyZone(
+  node.x,
+  node.y,
+  zones
+);
+
     const pulse =
       (Math.sin(time * node.pulseSpeed + node.pulseOffset) + 1) / 2;
 
@@ -107,8 +122,8 @@ export function drawNodes(
       layerAlpha = 0.75;
     }
 
-    const alpha =
-      (0.55 + pulse * 0.45) * layerAlpha;
+    let alpha =
+  (0.55 + pulse * 0.45) * layerAlpha;
 
     let shadowBlur = 0;
     let shadowAlpha = 0;
@@ -121,7 +136,7 @@ export function drawNodes(
       shadowAlpha = 0.20 + pulse * 0.10;
     }
 
-    ctx.fillStyle = `rgba(125,170,255,${alpha})`;
+  ctx.fillStyle = `rgba(125,170,255,${alpha})`;
 
     ctx.shadowBlur = shadowBlur;
     ctx.shadowColor = `rgba(125,170,255,${shadowAlpha})`;
@@ -142,17 +157,92 @@ export function drawNodes(
     ctx.shadowColor = "transparent";
   }
 }
+
+export function drawGlassNodes(
+  ctx: CanvasRenderingContext2D,
+  nodes: Node[],
+  time: number
+) {
+  for (const node of nodes) {
+    const pulse =
+      (Math.sin(time * node.pulseSpeed + node.pulseOffset) + 1) / 2;
+
+    const radius =
+      node.radius * 1.35 + pulse * 0.5;
+
+    let alpha = 0.18 + pulse * 0.10;
+
+    let blur = 12;
+    let glowAlpha = 0.18;
+
+    if (node.layer === 1) {
+      alpha += 0.08;
+      blur = 18;
+      glowAlpha = 0.30;
+    }
+
+    if (node.layer === 3) {
+      alpha *= 0.75;
+      blur = 8;
+      glowAlpha = 0.12;
+    }
+
+    ctx.fillStyle = `rgba(170,210,255,${alpha})`;
+
+    ctx.shadowBlur = blur;
+    ctx.shadowColor = `rgba(170,210,255,${glowAlpha})`;
+
+    ctx.beginPath();
+
+    ctx.arc(
+      node.x,
+      node.y,
+      radius,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fill();
+  }
+
+  ctx.shadowBlur = 0;
+  ctx.shadowColor = "transparent";
+}
+
 import { MAX_CONNECTION_DISTANCE } from "@/constants/decision-network";
 
 export function drawConnections(
   ctx: CanvasRenderingContext2D,
   nodes: Node[],
-  time: number
+  time: number,
+  zones: RenderZone[]
 ) {
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
       const nodeA = nodes[i];
       const nodeB = nodes[j];
+
+      const nodeAInside = isNodeInsideAnyZone(
+  nodeA.x,
+  nodeA.y,
+  zones
+);
+
+const nodeBInside = isNodeInsideAnyZone(
+  nodeB.x,
+  nodeB.y,
+  zones
+);
+
+let alphaMultiplier = 1;
+
+if (nodeAInside && nodeBInside) {
+    continue;
+}
+
+if (nodeAInside !== nodeBInside) {
+    alphaMultiplier = EDGE_CONNECTION_ALPHA;
+}
 
       const dx = nodeA.x - nodeB.x;
       const dy = nodeA.y - nodeB.y;
@@ -190,7 +280,7 @@ export function drawConnections(
         (0.30 + pulse * 0.15) *
         layerMultiplier;
 
-      ctx.strokeStyle = `rgba(125,170,255,${lineAlpha})`;
+      ctx.strokeStyle = `rgba(255,255,255,${lineAlpha * alphaMultiplier})`;
 
       ctx.lineWidth =
         nodeA.layer === 1 || nodeB.layer === 1

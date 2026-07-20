@@ -1,7 +1,7 @@
 "use client";
-import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import JourneyProgress from "./JourneyProgress";
 
 import QuestionnaireLayout from "./QuestionnaireLayout";
 import QuestionRenderer from "./QuestionRenderer";
@@ -12,8 +12,19 @@ import { AnswerValue, Answers } from "@/types/questionnaire";
 import { saveSession } from "@/store/session";
 import { useRouter } from "next/navigation";
 
-export default function Questionnaire() {
-  const [currentStep, setCurrentStep] = useState(0);
+import { useEffect, useRef, useState } from "react";
+import type { RenderZone } from "@/lib/render-zones";
+
+interface QuestionnaireProps {
+  onZonesChange: (zones: RenderZone[]) => void;
+}
+
+export default function Questionnaire({
+  onZonesChange,
+}: QuestionnaireProps) {
+  const [currentStep, setCurrentStep] = useState(0)
+
+const cardRef = useRef<HTMLElement>(null);
 
   const router = useRouter();
 
@@ -26,6 +37,21 @@ export default function Questionnaire() {
     "ideal-outcome": "",
   });
   const currentQuestion = QUESTIONS[currentStep];
+
+  useEffect(() => {
+  if (!cardRef.current) return;
+
+  const rect = cardRef.current.getBoundingClientRect();
+
+  onZonesChange([
+    {
+      x: rect.left,
+      y: rect.top,
+      width: rect.width,
+      height: rect.height,
+    },
+  ]);
+}, [onZonesChange]);
 
   function goNext() {
     if (currentStep < QUESTIONS.length - 1) {
@@ -95,60 +121,110 @@ export default function Questionnaire() {
   }
 
   const validation = getCurrentQuestionValidation();
-  const progress = ((currentStep + 1) / QUESTIONS.length) * 100;
 
   return (
 
     <QuestionnaireLayout>
 
-      <section className="w-full max-w-3xl rounded-3xl border p-8">
-        <div className="mb-8">
-          <Progress value={progress} />
-        </div>
-        <h1 className="text-3xl font-bold">
-          {currentQuestion.title}
-        </h1>
+      <section
+  ref={cardRef}
+  className="
+    relative
+    w-full
+    max-w-3xl
+    overflow-hidden
+    rounded-3xl
 
-        <p className="mt-2 text-muted-foreground">
-          Step {currentQuestion.step} of {QUESTIONS.length}
-        </p>
+    border
+    
+    border-white/[0.12]
 
-        <div className="mt-8">
-          <p className="text-muted-foreground">
-            {currentQuestion.description}
-          </p>
-        </div>
+    shadow-[0_20px_50px_rgba(0,0,0,0.35)]
+  "
+>
+       <div
+  className="
+    absolute
+    inset-0
 
-        <div className="mt-10">
-          <QuestionRenderer
-            question={currentQuestion}
-            value={answers[currentQuestion.id]}
-            otherValue={answers.prioritiesOther}
-            onChange={handleAnswerChange}
-            onOtherChange={handleOtherChange}
-          />
-        </div>
+    bg-zinc-50/65
+    dark:bg-zinc-900/40
 
-        {!validation.valid && (
-          <p className="mt-8 text-sm text-destructive">
-            {validation.message}
-          </p>
-        )}
+    backdrop-blur-2xl
+    backdrop-saturate-150
+  "
+/>
+<div
+  className="
+    pointer-events-none
+    absolute
+    inset-0
 
-        <div className="mt-4 flex items-center justify-between">
-          {currentStep > 0 ? (
-            <Button variant="outline" onClick={goBack}>
-              Back
-            </Button>
-          ) : (
-            <div />
+    bg-gradient-to-b
+    from-white/[0.08]
+    via-transparent
+    to-black/[0.10]
+  "
+/>
+
+<div
+  className="
+    pointer-events-none
+    absolute
+    inset-[1px]
+    rounded-[inherit]
+
+    shadow-[inset_0_1px_rgba(255,255,255,0.10)]
+  "
+/>
+        <div className="relative z-10 p-8">
+          <h1 className="text-3xl font-bold">
+            {currentQuestion.title}
+          </h1>
+
+          <div className="mt-8">
+            <p className="text-zinc-600 dark:text-zinc-400">
+  {currentQuestion.description}
+</p>
+          </div>
+
+          <div className="mt-10">
+            <QuestionRenderer
+              question={currentQuestion}
+              value={answers[currentQuestion.id]}
+              otherValue={answers.prioritiesOther}
+              onChange={handleAnswerChange}
+              onOtherChange={handleOtherChange}
+            />
+          </div>
+
+          {!validation.valid && (
+            <p className="mt-8 text-sm text-destructive">
+              {validation.message}
+            </p>
           )}
 
-          <Button onClick={goNext} disabled={!validation.valid}>
-            {currentStep === QUESTIONS.length - 1
-              ? "Start Simulation"
-              : "Continue"}
-          </Button>
+          <div className="mt-8 flex items-center justify-between">
+            {currentStep > 0 ? (
+              <Button variant="outline" onClick={goBack}>
+                Back
+              </Button>
+            ) : (
+              <div />
+            )}
+
+            <Button onClick={goNext} disabled={!validation.valid}>
+              {currentStep === QUESTIONS.length - 1
+                ? "Start Simulation"
+                : "Continue"}
+            </Button>
+          </div>
+          <div className="mt-10">
+            <JourneyProgress
+              currentStep={currentStep}
+              totalSteps={QUESTIONS.length}
+            />
+          </div>
         </div>
       </section>
     </QuestionnaireLayout>

@@ -18,7 +18,7 @@ export default function TextareaQuestion({
       value={value}
       placeholder={question.description}
       onChange={(e) => onChange(e.target.value)}
-      className="mt-8 min-h-40 resize-none"
+      className="mt-8 min-h-40 resize-none rounded-2xl"
     />
   );
 }
